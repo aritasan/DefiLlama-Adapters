@@ -61,4 +61,4 @@ module.exports = {
     pool2: pool2,
     staking: stakings(boardroomAddress, chamTokenAddress, "avax",)
   }
-};
+}; 
