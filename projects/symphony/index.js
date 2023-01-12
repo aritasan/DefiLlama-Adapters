@@ -1,5 +1,5 @@
 const sdk = require('@defillama/sdk');
-const { fetchURL } = require("../helper/utils");
+const { getConfig } = require('../helper/cache')
 const {
     transformAvaxAddress,
     transformPolygonAddress,
@@ -16,7 +16,7 @@ const zeroAddress = '0x0000000000000000000000000000000000000000';
 const TOKENLIST_URL = "https://raw.githubusercontent.com/symphony-finance/token-list/master/symphony.tokenlist.json";
 
 const calcTvl = async (balances, id, chain, block, transformAddress) => {
-    const tokenList = (await fetchURL(TOKENLIST_URL)).data.tokens
+    const tokenList = (await getConfig('symphony', TOKENLIST_URL)).tokens
         .filter((data) => data.chainId == id && !data.extensions.isNative)
         .map((token) => token);
 
@@ -48,7 +48,7 @@ const calcTvl = async (balances, id, chain, block, transformAddress) => {
 
     for (let i = 0; i < tokenList.length - 1; i++) {
         if (totalFunds[i].success) {
-            await sdk.util.sumSingleBalance(
+            sdk.util.sumSingleBalance(
                 balances,
                 transformAddress(tokenList[i].address),
                 totalFunds[i].output
@@ -98,7 +98,7 @@ const optimismTvl = async (chainBlocks) => {
 };
 
 module.exports = {
-    avalanche: { tvl: avaxTVL },
+    avax: { tvl: avaxTVL },
     polygon: { tvl: polygonTvl },
     optimism: { tvl: optimismTvl },
     methodology: "we only count tokens deposited in the yolo contract",

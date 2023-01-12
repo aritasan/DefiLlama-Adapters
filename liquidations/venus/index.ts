@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 import { getPagedGql } from "../utils/gql";
 import BigNumber from "bignumber.js";
-import { Liq } from "../utils/binResults";
+import { Liq } from "../utils/types";
 import {
   Account,
   borrowBalanceUnderlying,
@@ -18,8 +18,8 @@ const sdk = require("@defillama/sdk");
 const subgraphUrl = "https://api.thegraph.com/subgraphs/name/venusprotocol/venus-subgraph";
 
 const accountsQuery = gql`
-  query accounts($lastId: ID) {
-    accounts(first: 1000, where: { hasBorrowed: true, id_gt: $lastId }) {
+  query accounts($lastId: ID, $pageSize: Int) {
+    accounts(first: $pageSize, where: { hasBorrowed: true, id_gt: $lastId }) {
       id
       tokens {
         id
@@ -128,7 +128,7 @@ const positions = async () => {
         const _supplyBalanceUnderlying = supplyBalanceUnderlying(token);
         const _price = prices["bsc:" + token.market.underlyingAddress];
         if (!_price) {
-          console.log("no price for", "bsc:" + token.market.underlyingAddress);
+          // console.log("no price for", "bsc:" + token.market.underlyingAddress);
           return {
             debt: new BigNumber(0),
             price: 0,
