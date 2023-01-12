@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 import { getPagedGql } from "../utils/gql";
 import BigNumber from "bignumber.js";
-import { Liq } from "../utils/binResults";
+import { Liq } from "../utils/types";
 import {
   Account,
   borrowBalanceUnderlying,
@@ -15,8 +15,8 @@ import {
 const subgraphUrl = "https://api.thegraph.com/subgraphs/name/yhayun/benqi";
 
 const accountsQuery = gql`
-  query accounts($lastId: ID) {
-    accounts(first: 1000, where: { hasBorrowed: true, id_gt: $lastId }) {
+  query accounts($lastId: ID, $pageSize: Int) {
+    accounts(first: $pageSize, where: { hasBorrowed: true, id_gt: $lastId }) {
       id
       tokens {
         id
@@ -69,7 +69,7 @@ const positions = async () => {
         const _supplyBalanceUnderlying = supplyBalanceUnderlying(token);
         const _price = prices["avax:" + token.market.underlyingAddress];
         if (!_price) {
-          console.log("no price for", "avax:" + token.market.underlyingAddress);
+          // console.log("no price for", "avax:" + token.market.underlyingAddress);
           return {
             debt: new BigNumber(0),
             price: 0,
